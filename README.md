@@ -6,4 +6,4 @@ John's first commit
 
 ///////  Press Release  /////////
 
-Sam from Subiaco wanted to determine if he had contracted covid-19. He liked the Australian Governments Covid-19 App. However he wants a website where he could submit information on his current condition and the app could suggest whether or not he had the virus. If the website said he was at risk he also wants the ability to check where the nearest doctor is.
+Do you want to use the Covid-Safe App but are afraid the Australian Goverment is going to steal all your personal information. Our one stop shop for coronvirus medical advice is the website for you. You can submit symptoms and get free advice on whether or not you have been struck down with coronavirus! If you are one of the unlicky few you can then find your nearest doctor to cleanse your vessel.
