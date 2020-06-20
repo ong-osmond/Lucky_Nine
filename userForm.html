@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>COVID-19</title>
+    <!-- Favicon-->
+
+</head>
+
+<body id="page-top">
+    <div>COVID-19 form</div>
+
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="sex" id="male" value="male" checked>
+        <label class="form-check-label" for="male">
+          Male
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="sex" id="female" value="female">
+        <label class="form-check-label" for="female">
+          Female
+        </label>
+
+    </div>
+    <label class="form-check-label" for="age">Age
+    </label>
+    <input type="number" id="age" name="Age" min="0" max="99"><br><br>
+
+    <input type="submit" id="submit">
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Third party plugin JS-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <!-- Contact form JS-->
+    <script src="assets/mail/jqBootstrapValidation.js"></script>
+    <script src="assets/mail/contact_me.js"></script>
+    <!-- Core theme JS-->
+    <script>
+        $("#submit").on("click", function(event) {
+            event.preventDefault();
+            $("#current-weather").empty();
+            $("#forecast").empty();
+            var cityClicked = event.target.textContent;
+            getCoordinates(cityClicked);
+        });
+
+        $.ajax({
+            url: "https://api.infermedica.com/covid19/symptoms",
+            headers: {
+                "App-Id": "7d326ac8",
+                "App-Key": "accd209fd1ad490d9afe04738678b015"
+
+            },
+
+            type: 'GET',
+            dataType: 'json',
+            contentType: 'application/json',
+            //data: '{"sex": "female", "age": 45, "evidence" : []}',
+            success: function(data) {
+                console.log(data);
+            },
+            error: function() {
+                alert("Cannot get data");
+            }
+        });
+
+        var postdata = {
+            sex: "male",
+            age: 37,
+            evidence: [{
+                    id: "s_17",
+                    choice_id: "present"
+                }
+                // , {
+                //     id: "p_12",
+                //     choice_id: "present"
+                // }
+            ]
+        };
+
+        postdata = JSON.stringify(postdata);
+        console.log(postdata);
+
+        //console.log(toString('{"sex": "male", "age": 30, "evidence" : [{"id": "s_17", "choice_id": "present"}]}'));
+
+
+        $.ajax({
+            url: "https://api.infermedica.com/covid19/triage",
+            headers: {
+                "App-Id": "7d326ac8",
+                "App-Key": "accd209fd1ad490d9afe04738678b015"
+
+            },
+
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            //processData: false,
+            data: postdata,
+            //data: '{"sex":"male","age":37,"evidence":[{"id":"s_17","choice_id":"present"}]}',
+            //data: '{"sex": "male", "age": 30, "evidence" : [{"id": "s_17", "choice_id": "present"}]}',
+            success: function(data) {
+                //alert("Success!"); //JSON.stringify(data)
+                console.log(data);
+            },
+            error: function() {
+                alert("Cannot get data");
+            }
+        });
+    </script>
+
+</body>
+
+</html>
