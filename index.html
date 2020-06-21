@@ -440,7 +440,7 @@
 
 
     <script>
-        
+
         $.ajax({
             url: "https://api.infermedica.com/covid19/symptoms",
             headers: {
@@ -453,7 +453,7 @@
             success: function (data) {
                 //create questions array
                 var questions = data;
-                console.log(questions);
+       
 
                 //Loop over questions array and build html
                 for (i = 0; i < questions.length; i++) {
@@ -489,7 +489,7 @@
             //Object to be sent to triage
             var symptoms = {
                 sex: "male",
-                age: "30",
+                age: 30,
                 evidence: []
             };
             event.preventDefault();
@@ -510,10 +510,32 @@
                     symptoms.evidence.push(evid);
                 }
             }
-            console.log(symptoms);
+
+            var x = '{"sex": "male", "age": 30, "evidence" : []}';
+
+            $.ajax({
+                url: "https://api.infermedica.com/covid19/diagnosis",
+                headers: {
+                    "App-Id": "7d326ac8",
+                    "App-Key": "accd209fd1ad490d9afe04738678b015"
+                },
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                processData: true,
+                data: JSON.stringify(symptoms),
+                success: function (data) {
+                    //alert("Success!"); //JSON.stringify(data)
+                    console.log(data);
+                },
+                error: function () {
+                    alert("Cannot get data");
+                }
+            });
+          
         };
 
-        
+
     </script>
 </body>
 
