@@ -440,6 +440,7 @@
 
 
     <script>
+        
         $.ajax({
             url: "https://api.infermedica.com/covid19/symptoms",
             headers: {
@@ -473,7 +474,7 @@
 
                 }
 
-                var submit = $("<input>").attr("type", "submit");
+                var submit = $("<input>").attr("type", "submit").attr("onclick", "getData()");
                 $("#questionsList").append(submit);
 
 
@@ -481,7 +482,40 @@
             error: function () {
                 alert("Cannot get data");
             }
+
         });
+
+        //Get radio button data to be sent to triage
+        function getData() {
+
+            //Object to be sent to triage
+            var symptoms = {
+                sex: "male",
+                age: "30",
+                evidence: []
+            };
+            event.preventDefault();
+
+            //select all radio buttons
+            var forms = $(":radio")
+
+            //Loop over radio buttons
+            for (var i = 0; i < forms.length; i++) {
+                if (forms[i].checked) {
+                    //Create new object to go into array
+                    var evid = {
+                        id: "",
+                        choice_id: ""
+                    };
+                    evid.id = forms[i].name;
+                    evid.choice_id = forms[i].id;
+                    symptoms.evidence.push(evid);
+                }
+            }
+            console.log(symptoms);
+        };
+
+        
     </script>
 </body>
 
