@@ -10,7 +10,7 @@
     <title>COVID-19 TEST</title>
 </head>
 
-<body id="page-top">
+<body id="page-top" style="margin-left: 10px; margin-right: 10px;">
     <div>
         <h1>COVID-19 TEST</h1>
     </div>
@@ -107,24 +107,24 @@
             var question = $("<p>").text(responseJSON.question.text);
             var questionType = responseJSON.question.type;
             $("#question").append(question);
-            var questionItems = responseJSON.question.items;
+            var answer = responseJSON.question.items;
             //console.log((questionItems));
-            for (i = 0; i < questionItems.length; i++) {
-                var item = $("<li>").text(questionItems[i].name);
+            for (i = 0; i < answer.length; i++) {
+                var item = $("<li>").text(answer[i].name + "    ");
                 question.append(item);
-                var explanation = $("<p>").text(questionItems[i].explanation);
-                item.append(explanation);
                 //Check if the answer requires one answer only (radio button)
                 if (questionType == "group_single") {
-                    var yes = $('<input type="radio" name="rbtnCount" />');
+                    var yes = $('<input type="radio" name="rbtnCount" checked/>');
                 } else {
                     var yes = $('<input type="checkbox">');
                 }
                 yes.attr("class", "answer");
-                yes.attr("id", questionItems[i].id);
+                yes.attr("id", answer[i].id);
                 item.append(yes);
                 var yesTick = $("<label>").text("Present");
                 yes.append(yesTick);
+                var explanation = $("<p>").text(answer[i].explanation);
+                item.append(explanation);
             }
         }
 
@@ -132,17 +132,14 @@
         $("#questionSubmit").on("click", function(event) {
             var answer = $(".answer");
             for (var i = 0, length = answer.length; i < length; i++) {
+                var answerEvidence = {};
+                answerEvidence["id"] = answer[i].id;
                 if (answer[i].checked) {
-                    var answerEvidence = {};
-                    answerEvidence["id"] = answer[i].id;
                     answerEvidence["choice_id"] = "present";
-                    postdata.evidence.push(answerEvidence);
                 } else {
-                    var answerEvidence = {};
-                    answerEvidence["id"] = answer[i].id;
                     answerEvidence["choice_id"] = "absent";
-                    postdata.evidence.push(answerEvidence);
                 }
+                postdata.evidence.push(answerEvidence);
             }
             $("#question").empty();
             //console.log(postdata);
