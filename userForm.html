@@ -7,19 +7,14 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    <title>COVID-19</title>
-    <!-- Favicon-->
-
+    <title>COVID-19 TEST</title>
 </head>
 
 <body id="page-top">
     <div>
-        <h1>COVID-19 form</h1>
+        <h1>COVID-19 TEST</h1>
     </div>
-
     <div id="sexAndAge" style="display: block">
-
         <div class="form-check">
             <input class="form-check-input sex" type="radio" name="sex" id="male" value="male" checked>
             <label class="form-check-label" for="male">
@@ -34,9 +29,7 @@
         </div>
         <label class="form-check-label" for="age">Age</label>
         <input type="number" id="age" name="Age" min="0" max="99"><br><br>
-
         <input type="submit" id="sexAndAgeSubmit">
-
     </div>
 
     <div id="questions" style="display: none">
@@ -53,6 +46,7 @@
     <script src="assets/mail/jqBootstrapValidation.js"></script>
     <script src="assets/mail/contact_me.js"></script>
     <!-- Core theme JS-->
+
     <script>
         //Initialise postdata
         var postdata = {
@@ -73,7 +67,7 @@
                 }
             }
             postdata.age = parseInt($("#age").val());
-            console.log(postdata);
+            //console.log(postdata);
             sendDiagnosis(postdata);
             $("#sexAndAge").attr("style", "display: none");
         });
@@ -81,13 +75,11 @@
         //Handle diagnosis request
         function sendDiagnosis(postdata) {
             postdata = JSON.stringify(postdata);
-
             $.ajax({
                 url: "https://api.infermedica.com/covid19/diagnosis",
                 headers: {
                     "App-Id": "7d326ac8",
                     "App-Key": "accd209fd1ad490d9afe04738678b015"
-
                 },
                 type: 'POST',
                 dataType: 'json',
@@ -95,13 +87,14 @@
                 data: postdata,
                 success: function(data) {
                     var responseJSON = data;
-                    console.log(responseJSON);
+                    //console.log(responseJSON);
                     if (responseJSON.should_stop != true) {
                         displayQuestionAndAnswers(responseJSON);
                     } else sendTriage(responseJSON);
                 },
                 error: function() {
-                    alert("Cannot get data");
+                    $("#sexAndAge").attr("style", "display: block");
+                    alert("You have entered an invalid answer. Please try again.");
                 }
 
             });
@@ -112,17 +105,21 @@
         function displayQuestionAndAnswers(responseJSON) {
             $("#questions").attr("style", "display: block");
             var question = $("<p>").text(responseJSON.question.text);
+            var questionType = responseJSON.question.type;
             $("#question").append(question);
             var questionItems = responseJSON.question.items;
-            console.log((questionItems));
+            //console.log((questionItems));
             for (i = 0; i < questionItems.length; i++) {
                 var item = $("<li>").text(questionItems[i].name);
                 question.append(item);
-
                 var explanation = $("<p>").text(questionItems[i].explanation);
                 item.append(explanation);
-                var yes = $("<input>");
-                yes.attr("type", "checkbox");
+                //Check if the answer requires one answer only (radio button)
+                if (questionType == "group_single") {
+                    var yes = $('<input type="radio" name="rbtnCount" />');
+                } else {
+                    var yes = $('<input type="checkbox">');
+                }
                 yes.attr("class", "answer");
                 yes.attr("id", questionItems[i].id);
                 item.append(yes);
@@ -131,7 +128,7 @@
             }
         }
 
-        //Handle diagnosis form
+        //Handle diagnosis submission button
         $("#questionSubmit").on("click", function(event) {
             var answer = $(".answer");
             for (var i = 0, length = answer.length; i < length; i++) {
@@ -148,19 +145,18 @@
                 }
             }
             $("#question").empty();
-            console.log(postdata);
+            //console.log(postdata);
             sendDiagnosis(postdata);
         });
 
+        //Call this function when the response should_stop value is true and the test has concluded
         function sendTriage(responseJSON) {
             postdata = JSON.stringify(postdata);
-
             $.ajax({
                 url: "https://api.infermedica.com/covid19/triage",
                 headers: {
                     "App-Id": "7d326ac8",
                     "App-Key": "accd209fd1ad490d9afe04738678b015"
-
                 },
                 type: 'POST',
                 dataType: 'json',
@@ -168,7 +164,7 @@
                 data: postdata,
                 success: function(data) {
                     var responseJSON = data;
-                    console.log(responseJSON);
+                    //console.log(responseJSON);
                     var description = $("<p>").text(responseJSON.description +
                         " (Triage level code reference: " +
                         responseJSON.triage_level +
@@ -177,7 +173,7 @@
                     var label = $("<p>").text(responseJSON.label);
                     description.append(label);
                     $("#questionSubmit").attr("style", "display: none");
-                    var restart = $("<button>").text("Restart COVID-19 test.");
+                    var restart = $("<button>").text("Restart COVID-19 test");
                     restart.attr("id", "restart");
                     $("#question").append(restart);
                     //Reset postdata
@@ -197,7 +193,8 @@
 
                 },
                 error: function() {
-                    alert("Cannot get data");
+                    $("#sexAndAge").attr("style", "display: block");
+                    alert("You have entered an invalid answer. Please try again.");
                 }
 
             });
