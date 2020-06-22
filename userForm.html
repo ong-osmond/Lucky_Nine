@@ -184,6 +184,7 @@
                     $("#restart").on("click", function(event) {
                         $("#sexAndAge").attr("style", "display: block");
                         $("#questions").attr("style", "display: none");
+                        label.remove();
                         description.remove();
                         restart.remove();
                     })
