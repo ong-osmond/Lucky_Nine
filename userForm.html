@@ -16,25 +16,30 @@
 <body id="page-top">
     <div>COVID-19 form</div>
 
-    <div class="form-check">
-        <input class="form-check-input" type="radio" name="sex" id="male" value="male" checked>
-        <label class="form-check-label" for="male">
+    <div id="sexAndAge">
+
+        <div class="form-check">
+            <input class="form-check-input sex" type="radio" name="sex" id="male" value="male" checked>
+            <label class="form-check-label" for="male">
           Male
         </label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="radio" name="sex" id="female" value="female">
-        <label class="form-check-label" for="female">
+        </div>
+        <div class="form-check">
+            <input class="form-check-input sex" type="radio" name="sex" id="female" value="female">
+            <label class="form-check-label" for="female">
           Female
         </label>
+        </div>
+        <label class="form-check-label" for="age">Age</label>
+        <input type="number" id="age" name="Age" min="0" max="99"><br><br>
+
+        <input type="submit" id="submit">
 
     </div>
-    <label class="form-check-label" for="age">Age
-    </label>
-    <input type="number" id="age" name="Age" min="0" max="99"><br><br>
 
-    <input type="submit" id="submit">
+    <div id="questions">
 
+    </div>
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -46,77 +51,172 @@
     <script src="assets/mail/contact_me.js"></script>
     <!-- Core theme JS-->
     <script>
+        //Initialise postdata
+        var postdata = {
+            sex: "", //string
+            age: 0, //number
+            evidence: //object, please see sample object elements:
+                []
+        }
+
+        //Handle sex and age form
         $("#submit").on("click", function(event) {
             event.preventDefault();
-            $("#current-weather").empty();
-            $("#forecast").empty();
-            var cityClicked = event.target.textContent;
-            getCoordinates(cityClicked);
-        });
-
-        $.ajax({
-            url: "https://api.infermedica.com/covid19/symptoms",
-            headers: {
-                "App-Id": "7d326ac8",
-                "App-Key": "accd209fd1ad490d9afe04738678b015"
-
-            },
-
-            type: 'GET',
-            dataType: 'json',
-            contentType: 'application/json',
-            //data: '{"sex": "female", "age": 45, "evidence" : []}',
-            success: function(data) {
-                console.log(data);
-            },
-            error: function() {
-                alert("Cannot get data");
-            }
-        });
-
-        var postdata = {
-            sex: "male",
-            age: 37,
-            evidence: [{
-                    id: "s_17",
-                    choice_id: "present"
+            var sex = $(".sex");
+            for (var i = 0, length = sex.length; i < length; i++) {
+                if (sex[i].checked) {
+                    postdata.sex = sex[i].value;
+                    break;
                 }
-                // , {
-                //     id: "p_12",
-                //     choice_id: "present"
-                // }
-            ]
-        };
-
-        postdata = JSON.stringify(postdata);
-        console.log(postdata);
-
-        //console.log(toString('{"sex": "male", "age": 30, "evidence" : [{"id": "s_17", "choice_id": "present"}]}'));
-
-
-        $.ajax({
-            url: "https://api.infermedica.com/covid19/triage",
-            headers: {
-                "App-Id": "7d326ac8",
-                "App-Key": "accd209fd1ad490d9afe04738678b015"
-
-            },
-
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json',
-            //processData: false,
-            data: postdata,
-            //data: '{"sex":"male","age":37,"evidence":[{"id":"s_17","choice_id":"present"}]}',
-            //data: '{"sex": "male", "age": 30, "evidence" : [{"id": "s_17", "choice_id": "present"}]}',
-            success: function(data) {
-                //alert("Success!"); //JSON.stringify(data)
-                console.log(data);
-            },
-            error: function() {
-                alert("Cannot get data");
             }
+            postdata.age = parseInt($("#age").val());
+            console.log(postdata);
+            sendDiagnosis(postdata);
+            $("#sexAndAge").empty();
         });
+
+
+
+
+        function sendDiagnosis(postdata) {
+            postdata = JSON.stringify(postdata);
+
+            $.ajax({
+                url: "https://api.infermedica.com/covid19/diagnosis",
+                headers: {
+                    "App-Id": "7d326ac8",
+                    "App-Key": "accd209fd1ad490d9afe04738678b015"
+
+                },
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: postdata,
+                success: function(data) {
+                    var responseJSON = data;
+                    console.log(responseJSON);
+                    if (!responseJSON.question.should_stop) {
+                        var question = $("<p>").text(responseJSON.question.text);
+                        $("#questions").append(question);
+                        var questionItems = responseJSON.question.items;
+                        console.log((questionItems));
+                        for (i = 0; i < questionItems.length; i++) {
+                            var items = $("<li>").text(questionItems[i].name);
+                            var explanation = $("<p>").text(questionItems[i].explanation);
+                            question.append(items);
+                            items.append(explanation);
+                            var yes = $("<input>");
+                            yes.attr("class", "form-check-input");
+                            yes.attr("type", "radio");
+                            items.append(yes);
+                            var yesTick = $("<label>").text("Present");
+                            yes.append(yesTick);
+                        }
+
+                    }
+                },
+                error: function() {
+                    alert("Cannot get data");
+                }
+            });
+
+        }
+
+
+        function sendDiagnosisSample() {
+            var postdata = {
+                sex: "male",
+                age: 37,
+                evidence: [{
+                        id: "p_10",
+                        choice_id: "present"
+                    }, {
+                        id: "p_17",
+                        choice_id: "present"
+                    }, {
+                        id: "p_18",
+                        choice_id: "present"
+                    }, {
+                        id: "p_19",
+                        choice_id: "present"
+                    }, {
+                        id: "p_20",
+                        choice_id: "present"
+                    }, {
+                        id: "p_21",
+                        choice_id: "present"
+                    }, {
+                        id: "p_22",
+                        choice_id: "present"
+                    }, {
+                        id: "s_0",
+                        choice_id: "present"
+                    }, {
+                        id: "s_1",
+                        choice_id: "present"
+                    }, {
+                        id: "s_2",
+                        choice_id: "present"
+                    }, {
+                        id: "s_4",
+                        choice_id: "present"
+                    }, {
+                        id: "s_14",
+                        choice_id: "present"
+                    }, {
+                        id: "s_15",
+                        choice_id: "present"
+                    }, {
+                        id: "s_18",
+                        choice_id: "present"
+                    }, {
+                        id: "s_19",
+                        choice_id: "present"
+                    }, {
+                        id: "s_20",
+                        choice_id: "present"
+                    }, {
+                        id: "s_13",
+                        choice_id: "present"
+                    }, {
+                        id: "p_12",
+                        choice_id: "present"
+                    }
+
+                ]
+
+            };
+
+            postdata = JSON.stringify(postdata);
+            console.log(postdata);
+
+            //console.log(toString('{"sex": "male", "age": 30, "evidence" : [{"id": "s_17", "choice_id": "present"}]}'));
+
+
+            $.ajax({
+                url: "https://api.infermedica.com/covid19/diagnosis",
+                headers: {
+                    "App-Id": "7d326ac8",
+                    "App-Key": "accd209fd1ad490d9afe04738678b015"
+
+                },
+
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                //processData: false,
+                data: postdata,
+                //data: '{"sex":"male","age":37,"evidence":[{"id":"s_17","choice_id":"present"}]}',
+                //data: '{"sex": "male", "age": 30, "evidence" : [{"id": "s_17", "choice_id": "present"}]}',
+                success: function(data) {
+                    //alert("Success!"); //JSON.stringify(data)
+                    console.log(data);
+                },
+                error: function() {
+                    alert("Cannot get data");
+                }
+            });
+        }
     </script>
 
 </body>
