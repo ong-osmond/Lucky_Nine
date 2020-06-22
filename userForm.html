@@ -162,13 +162,13 @@
                 success: function(data) {
                     var responseJSON = data;
                     //console.log(responseJSON);
+                    var label = $("<h2>").text("Result: " + responseJSON.label);
+                    $("#question").append(label);
                     var description = $("<p>").text(responseJSON.description +
                         " (Triage level code reference: " +
                         responseJSON.triage_level +
                         ")");
                     $("#question").append(description);
-                    var label = $("<p>").text(responseJSON.label);
-                    description.append(label);
                     $("#questionSubmit").attr("style", "display: none");
                     var restart = $("<button>").text("Restart COVID-19 test");
                     restart.attr("id", "restart");
