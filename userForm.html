@@ -14,9 +14,11 @@
 </head>
 
 <body id="page-top">
-    <div>COVID-19 form</div>
+    <div>
+        <h1>COVID-19 form</h1>
+    </div>
 
-    <div id="sexAndAge">
+    <div id="sexAndAge" style="display: block">
 
         <div class="form-check">
             <input class="form-check-input sex" type="radio" name="sex" id="male" value="male" checked>
@@ -33,12 +35,13 @@
         <label class="form-check-label" for="age">Age</label>
         <input type="number" id="age" name="Age" min="0" max="99"><br><br>
 
-        <input type="submit" id="submit">
+        <input type="submit" id="sexAndAgeSubmit">
 
     </div>
 
-    <div id="questions">
-
+    <div id="questions" style="display: none">
+        <div id="question"></div>
+        <button id="questionSubmit" style="display: none">Submit</button>
     </div>
 
 
@@ -55,12 +58,12 @@
         var postdata = {
             sex: "", //string
             age: 0, //number
-            evidence: //object, please see sample object elements:
+            evidence: //object
                 []
         }
 
         //Handle sex and age form
-        $("#submit").on("click", function(event) {
+        $("#sexAndAgeSubmit").on("click", function(event) {
             event.preventDefault();
             var sex = $(".sex");
             for (var i = 0, length = sex.length; i < length; i++) {
@@ -72,12 +75,10 @@
             postdata.age = parseInt($("#age").val());
             console.log(postdata);
             sendDiagnosis(postdata);
-            $("#sexAndAge").empty();
+            $("#sexAndAge").attr("style", "display: none");
         });
 
-
-
-
+        //Handle diagnosis request
         function sendDiagnosis(postdata) {
             postdata = JSON.stringify(postdata);
 
@@ -95,126 +96,110 @@
                 success: function(data) {
                     var responseJSON = data;
                     console.log(responseJSON);
-                    if (!responseJSON.question.should_stop) {
-                        var question = $("<p>").text(responseJSON.question.text);
-                        $("#questions").append(question);
-                        var questionItems = responseJSON.question.items;
-                        console.log((questionItems));
-                        for (i = 0; i < questionItems.length; i++) {
-                            var items = $("<li>").text(questionItems[i].name);
-                            var explanation = $("<p>").text(questionItems[i].explanation);
-                            question.append(items);
-                            items.append(explanation);
-                            var yes = $("<input>");
-                            yes.attr("class", "form-check-input");
-                            yes.attr("type", "radio");
-                            items.append(yes);
-                            var yesTick = $("<label>").text("Present");
-                            yes.append(yesTick);
-                        }
-
-                    }
+                    if (responseJSON.should_stop != true) {
+                        displayQuestionAndAnswers(responseJSON);
+                    } else sendTriage(responseJSON);
                 },
                 error: function() {
                     alert("Cannot get data");
                 }
-            });
 
+            });
+            $("#questionSubmit").attr("style", "display: block");
         }
 
+        //Display question and answers while diagnosis is undertaken
+        function displayQuestionAndAnswers(responseJSON) {
+            $("#questions").attr("style", "display: block");
+            var question = $("<p>").text(responseJSON.question.text);
+            $("#question").append(question);
+            var questionItems = responseJSON.question.items;
+            console.log((questionItems));
+            for (i = 0; i < questionItems.length; i++) {
+                var item = $("<li>").text(questionItems[i].name);
+                question.append(item);
 
-        function sendDiagnosisSample() {
-            var postdata = {
-                sex: "male",
-                age: 37,
-                evidence: [{
-                        id: "p_10",
-                        choice_id: "present"
-                    }, {
-                        id: "p_17",
-                        choice_id: "present"
-                    }, {
-                        id: "p_18",
-                        choice_id: "present"
-                    }, {
-                        id: "p_19",
-                        choice_id: "present"
-                    }, {
-                        id: "p_20",
-                        choice_id: "present"
-                    }, {
-                        id: "p_21",
-                        choice_id: "present"
-                    }, {
-                        id: "p_22",
-                        choice_id: "present"
-                    }, {
-                        id: "s_0",
-                        choice_id: "present"
-                    }, {
-                        id: "s_1",
-                        choice_id: "present"
-                    }, {
-                        id: "s_2",
-                        choice_id: "present"
-                    }, {
-                        id: "s_4",
-                        choice_id: "present"
-                    }, {
-                        id: "s_14",
-                        choice_id: "present"
-                    }, {
-                        id: "s_15",
-                        choice_id: "present"
-                    }, {
-                        id: "s_18",
-                        choice_id: "present"
-                    }, {
-                        id: "s_19",
-                        choice_id: "present"
-                    }, {
-                        id: "s_20",
-                        choice_id: "present"
-                    }, {
-                        id: "s_13",
-                        choice_id: "present"
-                    }, {
-                        id: "p_12",
-                        choice_id: "present"
-                    }
+                var explanation = $("<p>").text(questionItems[i].explanation);
+                item.append(explanation);
+                var yes = $("<input>");
+                yes.attr("type", "checkbox");
+                yes.attr("class", "answer");
+                yes.attr("id", questionItems[i].id);
+                item.append(yes);
+                var yesTick = $("<label>").text("Present");
+                yes.append(yesTick);
+            }
+        }
 
-                ]
-
-            };
-
-            postdata = JSON.stringify(postdata);
+        //Handle diagnosis form
+        $("#questionSubmit").on("click", function(event) {
+            var answer = $(".answer");
+            for (var i = 0, length = answer.length; i < length; i++) {
+                if (answer[i].checked) {
+                    var answerEvidence = {};
+                    answerEvidence["id"] = answer[i].id;
+                    answerEvidence["choice_id"] = "present";
+                    postdata.evidence.push(answerEvidence);
+                } else {
+                    var answerEvidence = {};
+                    answerEvidence["id"] = answer[i].id;
+                    answerEvidence["choice_id"] = "absent";
+                    postdata.evidence.push(answerEvidence);
+                }
+            }
+            $("#question").empty();
             console.log(postdata);
+            sendDiagnosis(postdata);
+        });
 
-            //console.log(toString('{"sex": "male", "age": 30, "evidence" : [{"id": "s_17", "choice_id": "present"}]}'));
-
+        function sendTriage(responseJSON) {
+            postdata = JSON.stringify(postdata);
 
             $.ajax({
-                url: "https://api.infermedica.com/covid19/diagnosis",
+                url: "https://api.infermedica.com/covid19/triage",
                 headers: {
                     "App-Id": "7d326ac8",
                     "App-Key": "accd209fd1ad490d9afe04738678b015"
 
                 },
-
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
-                //processData: false,
                 data: postdata,
-                //data: '{"sex":"male","age":37,"evidence":[{"id":"s_17","choice_id":"present"}]}',
-                //data: '{"sex": "male", "age": 30, "evidence" : [{"id": "s_17", "choice_id": "present"}]}',
                 success: function(data) {
-                    //alert("Success!"); //JSON.stringify(data)
-                    console.log(data);
+                    var responseJSON = data;
+                    console.log(responseJSON);
+                    var description = $("<p>").text(responseJSON.description +
+                        " (Triage level code reference: " +
+                        responseJSON.triage_level +
+                        ")");
+                    $("#question").append(description);
+                    var label = $("<p>").text(responseJSON.label);
+                    description.append(label);
+                    $("#questionSubmit").attr("style", "display: none");
+                    var restart = $("<button>").text("Restart COVID-19 test.");
+                    restart.attr("id", "restart");
+                    $("#question").append(restart);
+                    //Reset postdata
+                    postdata = {
+                        sex: "", //string
+                        age: 0, //number
+                        evidence: //object
+                            []
+                    };
+                    //Handle restart button
+                    $("#restart").on("click", function(event) {
+                        $("#sexAndAge").attr("style", "display: block");
+                        $("#questions").attr("style", "display: none");
+                        description.remove();
+                        restart.remove();
+                    })
+
                 },
                 error: function() {
                     alert("Cannot get data");
                 }
+
             });
         }
     </script>
