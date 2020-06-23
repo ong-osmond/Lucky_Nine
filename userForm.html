@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <title>COVID-19 TEST</title>
 </head>
 
@@ -18,17 +19,21 @@
         <div class="form-check">
             <input class="form-check-input sex" type="radio" name="sex" id="male" value="male" checked>
             <label class="form-check-label" for="male">
-          Male
-        </label>
+                Male
+            </label>
         </div>
         <div class="form-check">
             <input class="form-check-input sex" type="radio" name="sex" id="female" value="female">
             <label class="form-check-label" for="female">
-          Female
-        </label>
+                Female
+            </label>
         </div>
         <label class="form-check-label" for="age">Age</label>
-        <input type="number" id="age" name="Age" min="0" max="99"><br><br>
+        <input type="number" id="age" name="Age" min="0" max="99"><br>
+        <p>Country of residence or country most recently visited (optional):
+            <select id="countries">
+                <option> </option>
+            </select></p>
         <input type="submit" id="sexAndAgeSubmit">
     </div>
 
@@ -39,6 +44,8 @@
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
     <!-- Third party plugin JS-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
@@ -57,7 +64,7 @@
         }
 
         //Handle sex and age form
-        $("#sexAndAgeSubmit").on("click", function(event) {
+        $("#sexAndAgeSubmit").on("click", function (event) {
             event.preventDefault();
             var sex = $(".sex");
             for (var i = 0, length = sex.length; i < length; i++) {
@@ -67,7 +74,14 @@
                 }
             }
             postdata.age = parseInt($("#age").val());
-            //console.log(postdata);
+            var countrySelected = $("#countries option:selected").attr('id');
+            //Add optional Evidence for country
+            if (countrySelected != null) {
+                var countryEvidence = {};
+                countryEvidence["id"] = countrySelected;
+                countryEvidence["choice_id"] = "present";
+                postdata.evidence.push(countryEvidence);
+            }
             sendDiagnosis(postdata);
             $("#sexAndAge").attr("style", "display: none");
         });
@@ -85,20 +99,18 @@
                 dataType: 'json',
                 contentType: 'application/json',
                 data: postdata,
-                success: function(data) {
+                success: function (data) {
                     var responseJSON = data;
                     //console.log(responseJSON);
                     if (responseJSON.should_stop != true) {
                         displayQuestionAndAnswers(responseJSON);
                     } else sendTriage(responseJSON);
                 },
-                error: function() {
+                error: function () {
                     $("#sexAndAge").attr("style", "display: block");
                     alert("You have entered an invalid answer. Please try again.");
                 }
-
             });
-            ("#questionSubmit").attr("style", "display: block");
         }
 
         //Display question and answers while diagnosis is undertaken
@@ -123,13 +135,17 @@
                 item.append(yes);
                 var yesTick = $("<label>").text("Present");
                 yes.append(yesTick);
-                var explanation = $("<p>").text(answer[i].explanation);
-                item.append(explanation);
+                if (answer[i].explanation != null) {
+                    var explanation = $("<p>").text(answer[i].explanation);
+                    item.append(explanation);
+                }
+                $("#questionSubmit").attr("style", "display: block");
             }
         }
 
         //Handle diagnosis submission button
-        $("#questionSubmit").on("click", function(event) {
+        $("#questionSubmit").on("click", function (event) {
+            $("#questionSubmit").attr("style", "display: none");
             var answer = $(".answer");
             for (var i = 0, length = answer.length; i < length; i++) {
                 var answerEvidence = {};
@@ -159,7 +175,7 @@
                 dataType: 'json',
                 contentType: 'application/json',
                 data: postdata,
-                success: function(data) {
+                success: function (data) {
                     var responseJSON = data;
                     //console.log(responseJSON);
                     var label = $("<h2>").text("Result: " + responseJSON.label);
@@ -181,7 +197,7 @@
                             []
                     };
                     //Handle restart button
-                    $("#restart").on("click", function(event) {
+                    $("#restart").on("click", function (event) {
                         $("#sexAndAge").attr("style", "display: block");
                         $("#questions").attr("style", "display: none");
                         label.remove();
@@ -190,7 +206,7 @@
                     })
 
                 },
-                error: function() {
+                error: function () {
                     $("#sexAndAge").attr("style", "display: block");
                     alert("You have entered an invalid answer. Please try again.");
                 }
@@ -199,6 +215,7 @@
 
         }
 
+        //Optional feature for the test; gets a list of countries with local COVID transmission
         function getLocations() {
             $.ajax({
                 url: "https://api.infermedica.com/covid19/locations",
@@ -209,24 +226,27 @@
                 type: 'GET',
                 dataType: 'json',
                 contentType: 'application/json',
-                success: function(data) {
+                success: function (data) {
                     var countriesArray = [];
                     for (i = 0; i < data.length; i++) {
                         var countryInfo = {
                             name: data[i].name,
                             id: data[i].id,
-                            has_local_covid_transmission : data[i].extras.has_local_covid_transmission
-                            }
-                          ;
-                          countriesArray.push(countryInfo);
-                     }
-                     countriesArray = $.grep(countriesArray, function(v) {
-                     return v.has_local_covid_transmission == true;
-                        });
-                    console.log(countriesArray);
-                    
+                            has_local_covid_transmission: data[i].extras.has_local_covid_transmission
+                        }
+                            ;
+                        countriesArray.push(countryInfo);
+                    }
+                    countriesArray = $.grep(countriesArray, function (v) {
+                        return v.has_local_covid_transmission == true;
+                    });
+                    //console.log(countriesArray);
+                    $(countriesArray).each(function () {
+                        $("#countries").append($("<option>").attr('id', this.id).text(this.name));
+                    });
+
                 },
-                error: function() {
+                error: function () {
                     alert("Cannot retrieve countries list.");
                 }
 
@@ -234,6 +254,7 @@
         }
 
         getLocations();
+
 
     </script>
 
