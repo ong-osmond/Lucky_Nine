@@ -98,7 +98,7 @@
                 }
 
             });
-            $("#questionSubmit").attr("style", "display: block");
+            ("#questionSubmit").attr("style", "display: block");
         }
 
         //Display question and answers while diagnosis is undertaken
@@ -196,7 +196,45 @@
                 }
 
             });
+
         }
+
+        function getLocations() {
+            $.ajax({
+                url: "https://api.infermedica.com/covid19/locations",
+                headers: {
+                    "App-Id": "7d326ac8",
+                    "App-Key": "accd209fd1ad490d9afe04738678b015"
+                },
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function(data) {
+                    var countriesArray = [];
+                    for (i = 0; i < data.length; i++) {
+                        var countryInfo = {
+                            name: data[i].name,
+                            id: data[i].id,
+                            has_local_covid_transmission : data[i].extras.has_local_covid_transmission
+                            }
+                          ;
+                          countriesArray.push(countryInfo);
+                     }
+                     countriesArray = $.grep(countriesArray, function(v) {
+                     return v.has_local_covid_transmission == true;
+                        });
+                    console.log(countriesArray);
+                    
+                },
+                error: function() {
+                    alert("Cannot retrieve countries list.");
+                }
+
+            });
+        }
+
+        getLocations();
+
     </script>
 
 </body>
