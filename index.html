@@ -23,7 +23,8 @@
                 <a class="navbar-brand js-scroll-trigger" href="#page-top">Start information about Covid</a><button class="navbar-toggler navbar-toggler-right text-uppercase font-weight-bold bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">Menu <i class="fas fa-bars"></i></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#portfolio">Covid Main</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#covidClinic">Covid Clinic</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#covid">Covid Main</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">About</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#contact">Contact</a></li>
                     </ul>
@@ -45,8 +46,28 @@
                 <p class="masthead-subheading font-weight-light mb-0">covid-app - Developed by Lucky-nine </p>
             </div>
         </header>
+        <!-- Nearest Hospital-->
+        
+        <section class="page-section text-white mb-0" id="covidClinic">
+            <div class="container">
+                <!-- Portfolio Section Heading-->
+            <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Nearest Covid Clinic</h2>
+            <!-- Icon Divider-->
+            <div class="divider-custom">
+                <div class="divider-custom-line"></div>
+                <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                <div class="divider-custom-line"></div>
+            </div>
+            <iframe width="600" height="450" frameborder="0" style="border:0"
+                src="https://www.google.com/maps/embed/v1/place?q=covidclinic&key=AIzaSyBw3EliRxjBolJRJrsQoIUXYSk-hdq-BXo"
+                allowfullscreen></iframe>
+        </div>
+        </div>
+                
+            </div>
+        </section>
         <!--Search for information About Covid--->
-        <section class="covid-app" id="covid">
+        <section class="covid-app bg-primary" id="covid">
             <div class="container">
                 <It keeps the privacy of all the users>
                 <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">covid-app</h2>
@@ -56,62 +77,7 @@
                     <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
                     <div class="divider-custom-line"></div>
                 </div>
-                <form action="">
-                    <div class="form-control">
-                    <label for="username" id="usename">Patient Name</label>
-                    <input type="text" name="usename" id="username" class="form-control is-invalid">
-                     </div>
-                     <div class="form-control">
-                    <label for="email" id="email"> Email</label>
-                     </div> 
-                     <div>
-                    <input type="email" name="email"class="form-control" placeholder="this is the email ">
-                     </div>
-                     <div>
-                    <label for="password" id="password">password</label>
-                    <input type="password" name="password"class="form-control needs validation">
-                     </div>
-                     <div>
-                    <label for="username" id="usename">Patient Name</label>
-                    <input type="text" name="usename" id="username"class="form-control">
-                     </div>
-                     <div>
-                    <label for="email" id="email"> Email</label>
-                    <input type="email" name="email"class="form-control">
-                     </div>
-                     <div>
-                    <label for="password" id="password">password</label>
-                    <input type="password" name="password"class="form-control">
-                     </div>
-                     <div>
-                    <input type="password" name="password"class="form-control">
-                     </div>
-                     <div>
-                    <label for="gender">gender</label>
-                     </div>
-                    <select name="gender" id="gender" class="form-control">
-                        <option value="male">male</option>
-                        <option value="female">female</option>
-                    </select>
-                     </div>
-                     <div>
-                    <input type="checkbox" id="accept-condition">
-                    <label for="" id="accept-condition">Accept terms and condition</label>
-                     </div>
-                    <div>
-                    <button type="submit" class="submit">submit</button>
-                    </div>
-                </form>
-                <script>
-                /*var form = document.querySelector('.need-validation');
-                form.addEventListener('submit',function(event){
-                    if(form.checkvalidity()===false){
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-
-                })
-            </script>
+                
                 <!-- Covid Grid Items-->
                 <div class="row">
                     <!-- covid Item 1-->
