@@ -47,7 +47,7 @@
                 //console.log(response);
                 //Get headlines for successful geolocation
                 countryCode = response.country_code;
-                //countryCode = "us";
+                //countryCode = "GB";
                 var newsSettings = {
                     "async": true,
                     "crossDomain": true,
@@ -79,7 +79,7 @@
             headlines = response.articles;
             var previousHeadline = "";
             var imageURL = "";
-            for (var i = 0; i < 7; i++) {
+            for (var i = 0; i < 6; i++) {
                 if (previousHeadline != headlines[i].title) {
                     var newsCard = $("<div>");
                     newsCard.attr("class", "card");
