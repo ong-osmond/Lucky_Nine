@@ -77,28 +77,33 @@
         function displayNews(response) {
             console.log(response.articles);
             headlines = response.articles;
+            var previousHeadline = "";
             for (var i = 0; i < headlines.length; i++) {
-
-                var newsCard = $("<div>");
-                newsCard.attr("class", "card");
-                newsCard.attr("style", "width : 20rem; height : 20rem; float : left; margin : 5px");
-                if (i < 3) {
-                    $("#headlines").append(newsCard);
-                } else {
-                    $("#headlines2").append(newsCard);
+                if (previousHeadline != headlines[i].title) {
+                    var newsCard = $("<div>");
+                    newsCard.attr("class", "card");
+                    newsCard.attr("style", "width : 20rem; height : 20rem; float : left; margin : 5px");
+                    if (i < 3) {
+                        $("#headlines").append(newsCard);
+                    } else {
+                        $("#headlines2").append(newsCard);
+                    }
+                    var newsCardBody = $("<div>");
+                    newsCardBody.attr("class", "card-body");
+                    newsCard.append(newsCardBody);
+                    var headlineLink = headlines[i].link;
+                    var goToPage = $("<a>");
+                    goToPage.attr("href", headlineLink);
+                    goToPage.attr("target", "_blank");
+                    newsCardBody.append(goToPage);
+                    var headline = $("<h6>").text(headlines[i].title);
+                    goToPage.append(headline);
+                    var sumary = $("<p>").text(headlines[i].summary + "\n Source: [" + headlines[i].clean_url + "]");
+                    newsCardBody.append(sumary);
+                    previousHeadline = headlines[i].title;
+                    console.log(previousHeadline);
                 }
-                var newsCardBody = $("<div>");
-                newsCardBody.attr("class", "card-body");
-                newsCard.append(newsCardBody);
-                var headlineLink = response.articles[i].link;
-                var goToPage = $("<a>");
-                goToPage.attr("href", headlineLink);
-                goToPage.attr("target", "_blank");
-                newsCardBody.append(goToPage);
-                var headline = $("<h6>").text(response.articles[i].title);
-                goToPage.append(headline);
-                var sumary = $("<p>").text(response.articles[i].summary + "\n Source: [" + response.articles[i].clean_url + "]");
-                newsCardBody.append(sumary);
+
             }
 
         }
