@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>COVID-19 News Feed</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=yes">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <row id="headlines"></row>
+    <row id="headlines2" style="float: left;"></row>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Third party plugin JS-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <!-- Contact form JS-->
+    <script src="assets/mail/jqBootstrapValidation.js"></script>
+    <script src="assets/mail/contact_me.js"></script>
+    <!-- Core theme JS-->
+
+    <script>
+        function getHeadlines() {
+
+            var countryCode = "";
+
+            var locationSettings = {
+                    "async": true,
+                    "crossDomain": true,
+                    "url": "https://ip-geolocation-ipwhois-io.p.rapidapi.com/json/",
+                    "method": "GET",
+                    "headers": {
+                        "x-rapidapi-host": "ip-geolocation-ipwhois-io.p.rapidapi.com",
+                        "x-rapidapi-key": "d17bca8126msh409010c4680f5aap169ce0jsnf3966f718bbf"
+                    }
+                }
+                //Get country from geolocation
+            $.ajax(locationSettings).done(function(response) {
+                console.log(response);
+                //Get headlines for successful geolocation
+                countryCode = response.country_code;
+                //countryCode = "us";
+                var newsSettings = {
+                    "async": true,
+                    "crossDomain": true,
+                    "url": "https://covid-19-news.p.rapidapi.com/v1/covid?lang=en&sort_by=date&page_size=6&country=" +
+                        countryCode +
+                        "&q=covid&ranked_only=TRUE",
+                    "method": "GET",
+                    "headers": {
+                        "x-rapidapi-host": "covid-19-news.p.rapidapi.com",
+                        "x-rapidapi-key": "d17bca8126msh409010c4680f5aap169ce0jsnf3966f718bbf"
+                    }
+                }
+
+                $.ajax(newsSettings).done(function(response) {
+                    //console.log(response);
+                    //News gets displayed
+                    displayNews(response);
+                });
+            });
+
+
+
+        }
+
+        getHeadlines();
+
+        function displayNews(response) {
+            console.log(response.articles);
+            headlines = response.articles;
+            for (var i = 0; i < headlines.length; i++) {
+
+                var newsCard = $("<div>");
+                newsCard.attr("class", "card");
+                newsCard.attr("style", "width : 20rem; height : 20rem; float : left; margin : 5px");
+                if (i < 3) {
+                    $("#headlines").append(newsCard);
+                } else {
+                    $("#headlines2").append(newsCard);
+                }
+                var newsCardBody = $("<div>");
+                newsCardBody.attr("class", "card-body");
+                newsCard.append(newsCardBody);
+                var headlineLink = response.articles[i].link;
+                var goToPage = $("<a>");
+                goToPage.attr("href", headlineLink);
+                goToPage.attr("target", "_blank");
+                newsCardBody.append(goToPage);
+                var headline = $("<h6>").text(response.articles[i].title);
+                goToPage.append(headline);
+                var sumary = $("<p>").text(response.articles[i].summary + "\n Source: [" + response.articles[i].clean_url + "]");
+                newsCardBody.append(sumary);
+            }
+
+        }
+    </script>
+
+</body>
+
+</html>
