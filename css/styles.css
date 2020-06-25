@@ -47,6 +47,13 @@
   box-sizing: border-box;
 }
 
+@media only screen and (max-width: 375px) {
+  iframe {
+    width: 300px;
+    height: 225px;
+  }
+}
+
 html {
   font-family: sans-serif;
   line-height: 1.15;
