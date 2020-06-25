@@ -6,14 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
+
+    <!--Bootstrap-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <title>COVID-19 TEST</title>
+
+    <!--foundation CDN-->
+    <script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.6.3/dist/js/foundation.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.6.3/dist/css/foundation.min.css">
+
+    <title>COVID-CHECKER</title>
 </head>
 
 <body id="page-top" style="margin-left: 10px; margin-right: 10px;">
     <div>
-        <h1>COVID-19 TEST</h1>
+        <h1>COVID-CHECKER</h1>
     </div>
     <div id="sexAndAge" style="display: block">
         <div class="form-check">
@@ -116,7 +123,7 @@
         //Display question and answers while diagnosis is undertaken
         function displayQuestionAndAnswers(responseJSON) {
             $("#questions").attr("style", "display: block");
-            var question = $("<p>").text(responseJSON.question.text);
+            var question = $("<h3>").text(responseJSON.question.text);
             var questionType = responseJSON.question.type;
             $("#question").append(question);
             var answer = responseJSON.question.items;
