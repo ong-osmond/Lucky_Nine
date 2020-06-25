@@ -7,13 +7,17 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <!--Bootstrap-->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <!--foundation CDN-->
-    <script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.6.3/dist/js/foundation.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.6.3/dist/css/foundation.min.css">
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.4/js/materialize.min.js"></script>
+
 
     <title>COVID-CHECKER</title>
 </head>
@@ -23,25 +27,47 @@
         <h1>COVID-CHECKER</h1>
     </div>
     <div id="sexAndAge" style="display: block">
+
         <div class="form-check">
-            <input class="form-check-input sex" type="radio" name="sex" id="male" value="male" checked>
-            <label class="form-check-label" for="male">
-                Male
-            </label>
+
+            <!--SEX-->
+            <p>
+                <label class="form-check-label" for="male">
+                    <input class="sex" type="radio" name="sex" id="male" value="male" checked>
+                    <span>Male</span>
+                </label>
+            </p>
+            <p>
+                <label class="form-check-label" for="female">
+                    <input class="form-check-input sex" type="radio" name="sex" id="female" value="female">
+                    <span>Female</span>
+                </label>
+            </p>
+
+            <!--Age-->
+            <p>
+                <label class="form-check-label" for="age">
+                    <input type="number" id="age" name="Age" min="0" max="99">
+                    <span>Age</span>
+                </label>
+            </p>
+
+            <!--Countries-->
+            <p>
+                Country of residence or country most recently visited (optional):
+                <select id="countries">
+                    <option> </option>
+                </select>
+            </p>
+
+            <!--Input-->
+            <input type="submit" id="sexAndAgeSubmit">
+
+
         </div>
-        <div class="form-check">
-            <input class="form-check-input sex" type="radio" name="sex" id="female" value="female">
-            <label class="form-check-label" for="female">
-                Female
-            </label>
-        </div>
-        <label class="form-check-label" for="age">Age</label>
-        <input type="number" id="age" name="Age" min="0" max="99"><br>
-        <p>Country of residence or country most recently visited (optional):
-            <select id="countries">
-                <option> </option>
-            </select></p>
-        <input type="submit" id="sexAndAgeSubmit">
+    </div>
+    <div class="form-check">
+
     </div>
 
     <div id="questions" style="display: none">
@@ -129,13 +155,14 @@
             var answer = responseJSON.question.items;
             //console.log((questionItems));
             for (i = 0; i < answer.length; i++) {
-                var item = $("<li>").text(answer[i].name + "    ");
+                var item = $("<span>").text(answer[i].name + "    ");
                 question.append(item);
                 //Check if the answer requires one answer only (radio button)
                 if (questionType == "group_single") {
                     var yes = $('<input type="radio" name="rbtnCount" checked/>');
                 } else {
-                    var yes = $('<input type="checkbox">');
+                    var yes = $('<p><label><input type="checkbox"><span></span></label></p>');
+
                 }
                 yes.attr("class", "answer");
                 yes.attr("id", answer[i].id);
@@ -149,6 +176,9 @@
                 $("#questionSubmit").attr("style", "display: block");
             }
         }
+
+
+
 
         //Handle diagnosis submission button
         $("#questionSubmit").on("click", function (event) {
@@ -263,6 +293,15 @@
         getLocations();
 
 
+    </script>
+
+    <script>
+        (function ($) {
+            $(function () {
+                // Plugin initialization
+                $('select').not('.disabled').formSelect();
+            });
+        })(jQuery); // end of jQuery name space
     </script>
 
 </body>

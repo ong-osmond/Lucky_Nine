@@ -173,7 +173,7 @@
           }
           var image = $("<img>");
           image.attr("src", imageSRC);
-          image.attr("style", "width: 20rem")
+          image.attr("style", "width: 18rem")
               //console.log(imageSRC);
           newsCard.prepend(image);
       });
