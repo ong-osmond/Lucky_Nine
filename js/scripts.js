@@ -73,9 +73,7 @@
 ///////// NEWS SECTION HANDLER ////////////////
 
 function getHeadlines() {
-
   var countryCode = "";
-
   var locationSettings = {
     "async": true,
     "crossDomain": true,
@@ -85,13 +83,12 @@ function getHeadlines() {
       "x-rapidapi-host": "ip-geolocation-ipwhois-io.p.rapidapi.com",
       "x-rapidapi-key": "d17bca8126msh409010c4680f5aap169ce0jsnf3966f718bbf"
     }
-  }
+  };
   //Get country from geolocation
   $.ajax(locationSettings).done(function (response) {
-    //console.log(response);
     //Get headlines for successful geolocation
     countryCode = response.country_code;
-    //countryCode = "GB";
+    //countryCode = "GB"; //Test other country codes
     var newsSettings = {
       "async": true,
       "crossDomain": true,
@@ -103,27 +100,20 @@ function getHeadlines() {
         "x-rapidapi-host": "covid-19-news.p.rapidapi.com",
         "x-rapidapi-key": "d17bca8126msh409010c4680f5aap169ce0jsnf3966f718bbf"
       }
-    }
-
+    };
     $.ajax(newsSettings).done(function (response) {
-      ////console.log(response);
       //News gets displayed
       displayNews(response);
     });
   });
-
-
-
 }
 
-getHeadlines();
-
 function displayNews(response) {
-  //console.log(response.articles);
-  headlines = response.articles;
+  var headlines = response.articles;
   var previousHeadline = "";
-  var imageURL = "";
-  for (var i = 0; i < 6; i++) {
+  var maxNews = 6; //Configurable number of headlines
+  for (var i = 0; i < maxNews; i++) {
+    //Check if previous headline was already reported. We don't want duplicate news.
     if (previousHeadline != headlines[i].title) {
       var newsCard = $("<div>");
       newsCard.attr("class", "card");
@@ -148,37 +138,30 @@ function displayNews(response) {
       //summary.attr("style", "height: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;");
       //newsCardBody.append(summary);
       previousHeadline = headlines[i].title;
-      ////console.log(previousHeadline);
       appendImage(headlineLink, newsCard);
-
-
     }
-
-
-
   }
 
 }
 
 //Add images to the cards
 function appendImage(headlineLink, newsCard) {
-  imageURL = "https://cors-anywhere.herokuapp.com/" + headlineLink;
+  var imageURL = "https://cors-anywhere.herokuapp.com/" + headlineLink;
   $.ajax({
     url: imageURL //"https://cors-anywhere.herokuapp.com/" + headlineLink
   }).then(function (data) {
     var html = $(data);
-    ////console.log(imageURL);
     var imageUnvailableSRC = "https://www.health.mil/-/media/Images/MHS/Photos/CDC-coronavirus.ashx?h=407&la=en&mw=720&w=720&hash=3DB38BA5F52E762419150762BFCF1CD044B01A29F38A7DFCB338A9CB6E2FC029";
-    imageSRC = html.find('img').attr('src');
+    var imageSRC = html.find('img').attr('src');
     if (!/^https?:\/\//.test(imageSRC)) {
       imageSRC = imageUnvailableSRC;
     }
     var image = $("<img>");
     image.attr("src", imageSRC);
-    image.attr("style", "width: 19rem")
-    //console.log(imageSRC);
+    image.attr("style", "width: 19rem");
     newsCard.prepend(image);
   });
 }
 
+getHeadlines();
 

@@ -47,10 +47,10 @@
   box-sizing: border-box;
 }
 
-@media only screen and (max-width: 375px) {
+@media only screen and (max-width: 320px) {
   iframe {
-    width: 300px;
-    height: 225px;
+    width: 250px;
+    height: 250px;
   }
 }
 
@@ -10272,4 +10272,8 @@ form .row:first-child .floating-label-form-group {
 
 .copyright {
   background-color: #1a252f;
+}
+
+.fa-globe {
+  color: white;
 }
