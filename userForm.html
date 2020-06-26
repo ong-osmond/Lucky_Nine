@@ -6,19 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-
     <!--Bootstrap-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    
-
     <title>COVID-CHECKER</title>
 </head>
 
-<body id="page-top" style="margin-left: 10px; margin-right: 10px;">
+<body id="page-top" style="margin-left: 10px; margin-right: 10px">
     <div>
-        <h1>COVID-CHECKER</h1>
+        <h1 style="text-align: center">COVID-CHECKER</h1>
     </div>
     <div id="sexAndAge" style="display: block">
         <div class="form-check">
@@ -41,12 +37,10 @@
             </select></p>
         <input type="submit" id="sexAndAgeSubmit">
     </div>
-
     <div id="questions" style="display: none">
         <div id="question"></div>
-        <button id="questionSubmit" style="display: none">Submit</button>
+        <button id="questionSubmit" style="display: none; float: right">Submit</button>
     </div>
-
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -66,7 +60,7 @@
             age: 0, //number
             evidence: //object
                 []
-        }
+        };
 
         //Handle sex and age form
         $("#sexAndAgeSubmit").on("click", function (event) {
@@ -121,14 +115,16 @@
         //Display question and answers while diagnosis is undertaken
         function displayQuestionAndAnswers(responseJSON) {
             $("#questions").attr("style", "display: block");
-            var question = $("<h3>").text(responseJSON.question.text);
+            var question = $("<h4>").text(responseJSON.question.text);
             var questionType = responseJSON.question.type;
             $("#question").append(question);
+            var questionLineBreak = $("<br>");
+            $("#question").append(questionLineBreak);
             var answer = responseJSON.question.items;
             //console.log((questionItems));
-            for (i = 0; i < answer.length; i++) {
-                var item = $("<li>").text(answer[i].name + "    ");
-                question.append(item);
+            for (var i = 0; i < answer.length; i++) {
+                var item = $("<p>").text(answer[i].name + "    ");
+                $("#question").append(item);
                 //Check if the answer requires one answer only (radio button)
                 if (questionType == "group_single") {
                     var yes = $('<input type="radio" name="rbtnCount" checked/>');
@@ -142,6 +138,7 @@
                 yes.append(yesTick);
                 if (answer[i].explanation != null) {
                     var explanation = $("<p>").text(answer[i].explanation);
+                    explanation.attr("class", "form-text text-muted");
                     item.append(explanation);
                 }
                 $("#questionSubmit").attr("style", "display: block");
@@ -149,7 +146,7 @@
         }
 
         //Handle diagnosis submission button
-        $("#questionSubmit").on("click", function (event) {
+        $("#questionSubmit").on("click", function () {
             $("#questionSubmit").attr("style", "display: none");
             var answer = $(".answer");
             for (var i = 0, length = answer.length; i < length; i++) {
@@ -168,7 +165,7 @@
         });
 
         //Call this function when the response should_stop value is true and the test has concluded
-        function sendTriage(responseJSON) {
+        function sendTriage() {
             postdata = JSON.stringify(postdata);
             $.ajax({
                 url: "https://api.infermedica.com/covid19/triage",
@@ -202,24 +199,20 @@
                             []
                     };
                     //Handle restart button
-                    $("#restart").on("click", function (event) {
+                    $("#restart").on("click", function () {
                         $("#sexAndAge").attr("style", "display: block");
                         $("#questions").attr("style", "display: none");
                         label.remove();
                         description.remove();
                         restart.remove();
-                    })
-
+                    });
                 },
                 error: function () {
                     $("#sexAndAge").attr("style", "display: block");
                     alert("You have entered an invalid answer. Please try again.");
                 }
-
             });
-
         }
-
         //Optional feature for the test; gets a list of countries with local COVID transmission
         function getLocations() {
             $.ajax({
@@ -233,13 +226,12 @@
                 contentType: 'application/json',
                 success: function (data) {
                     var countriesArray = [];
-                    for (i = 0; i < data.length; i++) {
+                    for (var i = 0; i < data.length; i++) {
                         var countryInfo = {
                             name: data[i].name,
                             id: data[i].id,
                             has_local_covid_transmission: data[i].extras.has_local_covid_transmission
-                        }
-                            ;
+                        };
                         countriesArray.push(countryInfo);
                     }
                     countriesArray = $.grep(countriesArray, function (v) {
@@ -249,18 +241,14 @@
                     $(countriesArray).each(function () {
                         $("#countries").append($("<option>").attr('id', this.id).text(this.name));
                     });
-
                 },
                 error: function () {
                     alert("Cannot retrieve countries list.");
                 }
-
             });
         }
 
         getLocations();
-
-
     </script>
 
 </body>
