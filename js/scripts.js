@@ -88,10 +88,9 @@ function getHeadlines() {
   }
   //Get country from geolocation
   $.ajax(locationSettings).done(function (response) {
-    //console.log(response);
     //Get headlines for successful geolocation
     countryCode = response.country_code;
-    //countryCode = "GB";
+    countryCode = "GB";
     var newsSettings = {
       "async": true,
       "crossDomain": true,
@@ -104,22 +103,15 @@ function getHeadlines() {
         "x-rapidapi-key": "d17bca8126msh409010c4680f5aap169ce0jsnf3966f718bbf"
       }
     }
-
     $.ajax(newsSettings).done(function (response) {
-      ////console.log(response);
       //News gets displayed
       displayNews(response);
     });
   });
 
-
-
 }
 
-getHeadlines();
-
 function displayNews(response) {
-  //console.log(response.articles);
   headlines = response.articles;
   var previousHeadline = "";
   var imageURL = "";
@@ -148,18 +140,11 @@ function displayNews(response) {
       //summary.attr("style", "height: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;");
       //newsCardBody.append(summary);
       previousHeadline = headlines[i].title;
-      ////console.log(previousHeadline);
       appendImage(headlineLink, newsCard);
-
-
     }
-
-
-
   }
 
 }
-
 //Add images to the cards
 function appendImage(headlineLink, newsCard) {
   imageURL = "https://cors-anywhere.herokuapp.com/" + headlineLink;
@@ -168,7 +153,7 @@ function appendImage(headlineLink, newsCard) {
   }).then(function (data) {
     var html = $(data);
     ////console.log(imageURL);
-    var imageUnvailableSRC = "https://www.health.mil/-/media/Images/MHS/Photos/CDC-coronavirus.ashx?h=407&la=en&mw=720&w=720&hash=3DB38BA5F52E762419150762BFCF1CD044B01A29F38A7DFCB338A9CB6E2FC029";
+    var imageUnvailableSRC = "assets\img\cdc-w9KEokhajKw-unsplash.jpg";
     imageSRC = html.find('img').attr('src');
     if (!/^https?:\/\//.test(imageSRC)) {
       imageSRC = imageUnvailableSRC;
@@ -181,4 +166,5 @@ function appendImage(headlineLink, newsCard) {
   });
 }
 
+getHeadlines();
 
