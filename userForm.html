@@ -6,52 +6,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <!--Bootstrap-->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+    <!--jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!--Bulma-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+
+    <!-- Font Awesome-->
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+
     <title>COVID-CHECKER</title>
+
+
 </head>
 
-<body id="page-top" style="margin-left: 10px; margin-right: 10px">
-    <div>
-        <h1 style="text-align: center">COVID-CHECKER</h1>
-    </div>
-    <div id="sexAndAge" style="display: block">
-        <div class="form-check">
-            <input class="form-check-input sex" type="radio" name="sex" id="male" value="male" checked>
-            <label class="form-check-label" for="male">
-                Male
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input sex" type="radio" name="sex" id="female" value="female">
-            <label class="form-check-label" for="female">
-                Female
-            </label>
-        </div>
-        <label class="form-check-label" for="age">Age</label>
-        <input type="number" id="age" name="Age" min="0" max="99"><br>
-        <p>Country of residence or country most recently visited (optional):
-            <select id="countries">
-                <option> </option>
-            </select></p>
-        <input type="submit" id="sexAndAgeSubmit">
-    </div>
-    <div id="questions" style="display: none">
-        <div id="question"></div>
-        <button id="questionSubmit" style="display: none; float: right">Submit</button>
-    </div>
+<body id="page-top">
+    <section class="section">
+        <div class="container">
+            <h1 class="title">COVID-CHECKER</h1>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
-    <!-- Third party plugin JS-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-    <!-- Contact form JS-->
-    <script src="assets/mail/jqBootstrapValidation.js"></script>
-    <script src="assets/mail/contact_me.js"></script>
-    <!-- Core theme JS-->
+            <div id="sexAndAge" style="display: block">
+                <form class="form-check">
+
+                    <!--Male-->
+                    <label class="form-check-label" for="male">
+                        <input class="form-check-input sex" type="checkbox" name="sex" id="male" value="male" checked>
+                        Male
+                    </label>
+
+                    <!--Female-->
+                    <label class="form-check-label" for="female">
+                        <input class="form-check-input sex" type="checkbox" name="sex" id="female" value="female">
+                        Female
+                    </label>
+
+                    <!--Age-->
+                    <label class="form-check-label" for="age">
+                        <input type="number" id="age" name="Age" min="0" max="99">
+                        Age
+                    </label>
+
+                    <!--Countries-->
+                    <p>Country of residence or country most recently visited (optional):
+                        <select id="countries">
+                            <option> </option>
+                        </select>
+                    </p>
+                    
+                    <br>
+
+                    <!--Submit button-->
+                    <div class="control">
+                        <button id="sexAndAgeSubmit" class="button is-primary">Submit</button>
+                    </div>
+
+                </form>
+            </div>
+
+            <!--Questions-->
+            <div id="questions" style="display: none">
+
+                <!--Div to display questions-->
+                <div id="question"></div>
+
+                <br>
+
+                <!--Submit button-->
+                <div class="control">
+                    <button id="questionSubmit" class="button is-primary" style="display: none">Submit</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+
 
     <script>
         //Initialise postdata
@@ -115,7 +148,7 @@
         //Display question and answers while diagnosis is undertaken
         function displayQuestionAndAnswers(responseJSON) {
             $("#questions").attr("style", "display: block");
-            var question = $("<h4>").text(responseJSON.question.text);
+            var question = $("<h2>").text(responseJSON.question.text).attr("class", "subtitle");
             var questionType = responseJSON.question.type;
             $("#question").append(question);
             var questionLineBreak = $("<br>");
@@ -188,9 +221,9 @@
                         ")");
                     $("#question").append(description);
                     $("#questionSubmit").attr("style", "display: none");
-                    var restart = $("<button>").text("Restart COVID-19 test");
+                    var restart = $("<button>").text("Restart COVID-19 test").attr("class", "button is-primary");
                     restart.attr("id", "restart");
-                    $("#question").append(restart);
+                    $("#question").append("<br>").append(restart);
                     //Reset postdata
                     postdata = {
                         sex: "", //string
