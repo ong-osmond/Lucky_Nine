@@ -41,7 +41,7 @@
             </div>
         </div>
     </nav>
-   
+
     <!-- Masthead-->
     <header class="masthead bg-primary text-white text-center">
         <div class="container d-flex align-items-center flex-column">
@@ -56,7 +56,8 @@
             <!-- Masthead Subheading-->
             <p class="masthead-subheading font-weight-light mb-0">Presented by TEAM LUCKY-NINE</p>
             <br>
-            <a href="#covidForm" class="btn btn-secondary btn-lg js-scroll-trigger" role="button">TRY OUR COVID-CHECKER NOW! >></a>
+            <a href="#covidForm" class="btn btn-secondary btn-lg js-scroll-trigger" role="button">TRY OUR COVID-CHECKER
+                NOW! >></a>
         </div>
     </header>
 
@@ -65,7 +66,8 @@
         <div class="container text-center">
             <!-- Portfolio Section Heading-->
             <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">COVID-CHECKER &trade;</h2>
-            <h3 class="page-section-subheading text-center text-uppercase text-secondary mb-0">Powered by INFERMEDICA</h3>
+            <h3 class="page-section-subheading text-center text-uppercase text-secondary mb-0">Powered by INFERMEDICA
+            </h3>
             <!-- Icon Divider-->
             <div class="divider-custom">
                 <div class="divider-custom-line"></div>
@@ -73,9 +75,56 @@
                 <div class="divider-custom-line"></div>
             </div>
             <!--Modal to display COVID-CHECKER-->
-            <a href="userForm.html"
-                onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
-                class="btn btn-primary btn-lg" target="_blank">Begin your COVID assessment</a>
+
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn-lg btn-primary" data-toggle="modal" data-target="#covidChecker">
+                Begin your COVID Check
+            </button>
+        
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="covidChecker" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="color: black">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="exampleModalLabel">COVID-CHECKER</h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" style="padding-top: 0px">
+                        <div id="sexAndAge" style="display: block">
+                            <div class="form-check">
+                                <input class="form-check-input sex" type="radio" name="sex" id="male" value="male"
+                                    checked>
+                                <label class="form-check-label" for="male">
+                                    Male
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input sex" type="radio" name="sex" id="female" value="female">
+                                <label class="form-check-label" for="female">
+                                    Female
+                                </label>
+                            </div>
+                            <label class="form-check-label" for="age">Age</label>
+                            <input type="number" id="age" name="Age" min="0" max="99"><br>
+                            <p>Country of residence or country most recently visited (optional):
+                                <select id="countries">
+                                    <!-- <option></option> -->
+                                </select></p>
+                            <input type="submit" id="sexAndAgeSubmit" class="btn btn-primary btn-lg btn-block">
+                        </div>
+                        <div id="questions" style="display: none">
+                            <div id="question"></div>
+                            <button id="questionSubmit" style="display: none" class="btn btn-primary btn-lg btn-block">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -170,8 +219,9 @@
                 <div class="col-lg-4">
                     <h4 class="text-uppercase mb-4">LEGAL AND DISCLAIMER</h4>
                     <p class="lead mb-0">COVID-19 HUB is not a medical website. COVID-CHECKER &trade; is powered by
-                        <a href="https://developer.infermedica.com/" target="_blank">Infermedica</a>. TEAM LUCKY-NINE is not liable
-                        for any recommendations by our API service provider. Please consult your doctor for 
+                        <a href="https://developer.infermedica.com/" target="_blank">Infermedica</a>. TEAM LUCKY-NINE is
+                        not liable
+                        for any recommendations by our API service provider. Please consult your doctor for
                         comprehensive medical advice.</p>
                 </div>
             </div>
