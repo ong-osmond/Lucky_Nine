@@ -70,6 +70,206 @@
 })(jQuery); // End of use strict
 
 
+///////// COVID-CHECKER APP ////////////////////
+
+//Initialise postdata
+var postdata = {
+    sex: "", //string
+    age: 0, //number
+    evidence: //object
+        []
+};
+
+//Handle sex and age form
+$("#sexAndAgeSubmit").on("click", function (event) {
+    event.preventDefault();
+    var sex = $(".sex");
+    for (var i = 0, length = sex.length; i < length; i++) {
+        if (sex[i].checked) {
+            postdata.sex = sex[i].value;
+            break;
+        }
+    }
+    postdata.age = parseInt($("#age").val());
+    var countrySelected = $("#countries option:selected").attr('id');
+    //Add optional Evidence for country
+    if (countrySelected != null) {
+        var countryEvidence = {};
+        countryEvidence["id"] = countrySelected;
+        countryEvidence["choice_id"] = "present";
+        postdata.evidence.push(countryEvidence);
+    }
+    sendDiagnosis(postdata);
+    $("#sexAndAge").attr("style", "display: none");
+});
+
+//Handle diagnosis request
+function sendDiagnosis(postdata) {
+    postdata = JSON.stringify(postdata);
+    $.ajax({
+        url: "https://api.infermedica.com/covid19/diagnosis",
+        headers: {
+            "App-Id": "7d326ac8",
+            "App-Key": "accd209fd1ad490d9afe04738678b015"
+        },
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: postdata,
+        success: function (data) {
+            var responseJSON = data;
+            //console.log(responseJSON);
+            if (responseJSON.should_stop != true) {
+                displayQuestionAndAnswers(responseJSON);
+            } else sendTriage(responseJSON);
+        },
+        error: function () {
+            $("#sexAndAge").attr("style", "display: block");
+            alert("You have entered an invalid answer. Please try again.");
+        }
+    });
+}
+
+//Display question and answers while diagnosis is undertaken
+function displayQuestionAndAnswers(responseJSON) {
+    $("#questions").attr("style", "display: block");
+    var question = $("<h5>").text(responseJSON.question.text);
+    var questionType = responseJSON.question.type;
+    $("#question").append(question);
+    var questionLineBreak = $("<br>");
+    $("#question").append(questionLineBreak);
+    var answer = responseJSON.question.items;
+    //console.log((questionItems));
+    for (var i = 0; i < answer.length; i++) {
+        var item = $("<h6>").text(answer[i].name + "    ");
+        $("#question").append(item);
+        //Check if the answer requires one answer only (radio button)
+        if (questionType == "group_single") {
+            var yes = $('<input type="radio" name="rbtnCount" checked/>');
+        } else {
+            var yes = $('<input type="checkbox">');
+        }
+        yes.attr("class", "answer");
+        yes.attr("id", answer[i].id);
+        item.append(yes);
+        var yesTick = $("<label>").text("Present");
+        yes.append(yesTick);
+        if (answer[i].explanation != null) {
+            var explanation = $("<p>").text(answer[i].explanation);
+            explanation.attr("class", "form-text text-muted");
+            item.append(explanation);
+        }
+        $("#questionSubmit").attr("style", "display: block");
+    }
+}
+
+//Handle diagnosis submission button
+$("#questionSubmit").on("click", function () {
+    $("#questionSubmit").attr("style", "display: none");
+    var answer = $(".answer");
+    for (var i = 0, length = answer.length; i < length; i++) {
+        var answerEvidence = {};
+        answerEvidence["id"] = answer[i].id;
+        if (answer[i].checked) {
+            answerEvidence["choice_id"] = "present";
+        } else {
+            answerEvidence["choice_id"] = "absent";
+        }
+        postdata.evidence.push(answerEvidence);
+    }
+    $("#question").empty();
+    //console.log(postdata);
+    sendDiagnosis(postdata);
+});
+
+//Call this function when the response should_stop value is true and the test has concluded
+function sendTriage() {
+    postdata = JSON.stringify(postdata);
+    $.ajax({
+        url: "https://api.infermedica.com/covid19/triage",
+        headers: {
+            "App-Id": "7d326ac8",
+            "App-Key": "accd209fd1ad490d9afe04738678b015"
+        },
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: postdata,
+        success: function (data) {
+            var responseJSON = data;
+            //console.log(responseJSON);
+            var label = $("<h5>").text("Result: " + responseJSON.label);
+            $("#question").append(label);
+            var description = $("<p>").text(responseJSON.description +
+                " (Triage level code reference: " +
+                responseJSON.triage_level +
+                ")");
+            $("#question").append(description);
+            $("#questionSubmit").attr("style", "display: none");
+            var restart = $("<button>").text("Restart COVID-CHECKER");
+            restart.attr("id", "restart");
+            restart.attr("class","btn btn-primary btn-lg btn-block");
+            $("#question").append(restart);
+            //Reset postdata
+            postdata = {
+                sex: "", //string
+                age: 0, //number
+                evidence: //object
+                    []
+            };
+            //Handle restart button
+            $("#restart").on("click", function () {
+                $("#sexAndAge").attr("style", "display: block");
+                $("#questions").attr("style", "display: none");
+                label.remove();
+                description.remove();
+                restart.remove();
+            });
+        },
+        error: function () {
+            $("#sexAndAge").attr("style", "display: block");
+            alert("You have entered an invalid answer. Please try again.");
+        }
+    });
+}
+//Optional feature for the test; gets a list of countries with local COVID transmission
+function getLocations() {
+    $.ajax({
+        url: "https://api.infermedica.com/covid19/locations",
+        headers: {
+            "App-Id": "7d326ac8",
+            "App-Key": "accd209fd1ad490d9afe04738678b015"
+        },
+        type: 'GET',
+        dataType: 'json',
+        contentType: 'application/json',
+        success: function (data) {
+            var countriesArray = [];
+            for (var i = 0; i < data.length; i++) {
+                var countryInfo = {
+                    name: data[i].name,
+                    id: data[i].id,
+                    has_local_covid_transmission: data[i].extras.has_local_covid_transmission
+                };
+                countriesArray.push(countryInfo);
+            }
+            countriesArray = $.grep(countriesArray, function (v) {
+                return v.has_local_covid_transmission == true;
+            });
+            //console.log(countriesArray);
+            $(countriesArray).each(function () {
+                $("#countries").append($("<option>").attr('id', this.id).text(this.name));
+            });
+        },
+        error: function () {
+            alert("Cannot retrieve countries list.");
+        }
+    });
+}
+
+getLocations();
+
+
 ///////// NEWS SECTION HANDLER ////////////////
 
 function getHeadlines() {
