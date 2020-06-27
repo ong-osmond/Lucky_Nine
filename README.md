@@ -24,3 +24,6 @@ Features:
 3. Integration with ip-geolocation-ipwhois-io.p.rapidapi.com, covid-19-news.p.rapidapi.com and cors-anywhere.herokuapp.com for news based on user's IP provider (country-specific).
 
 ![COVID-News](assets/img/readme/04-COVID-News.png)
+
+Our Google Slides presentation:
+https://docs.google.com/presentation/d/1GBcKfd0j3twhXSA-gWQmiw0REnvRaXvENZA8d7xEpDw/edit?usp=sharing
