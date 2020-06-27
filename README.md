@@ -7,7 +7,7 @@ This is the URL for the application: https://ong-osmond.github.io/Lucky_Nine/
 ![Index Page](/assets/img/readme/01-Landing-Page.png)
 
 Our one stop shop for CORONAVIRUS info is the website to go to during this time of pandemic. 
-Our main feature is the COVID-CHECKER where you can submit symptoms and get free advice on whether or not you have been struck down with COVID-19! If you are one of the unlucky few you then you can find your nearest COVID clinic to cleanse your vessel. Otherwise, just browse the latest news that's served dynamically through an API.
+Our main feature is the COVID-CHECKER where you can submit symptoms and get free advice on whether or not you have been struck down with COVID-19! If you are one of the unlucky few, then you can find your nearest COVID clinic to get tested. Otherwise, just browse the latest news that's served dynamically through an API.
 
 Features:
 
