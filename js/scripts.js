@@ -245,6 +245,7 @@ function getLocations() {
         contentType: 'application/json',
         success: function (data) {
             var countriesArray = [];
+            $("#countries").append($("<option>").attr('selected', "selected"));
             for (var i = 0; i < data.length; i++) {
                 var countryInfo = {
                     name: data[i].name,
@@ -351,10 +352,10 @@ function appendImage(headlineLink, newsCard) {
     url: imageURL //"https://cors-anywhere.herokuapp.com/" + headlineLink
   }).then(function (data) {
     var html = $(data);
-    var imageUnvailableSRC = "https://www.health.mil/-/media/Images/MHS/Photos/CDC-coronavirus.ashx?h=407&la=en&mw=720&w=720&hash=3DB38BA5F52E762419150762BFCF1CD044B01A29F38A7DFCB338A9CB6E2FC029";
+    var imageUnavailableSRC = "https://www.health.mil/-/media/Images/MHS/Photos/CDC-coronavirus.ashx?h=407&la=en&mw=720&w=720&hash=3DB38BA5F52E762419150762BFCF1CD044B01A29F38A7DFCB338A9CB6E2FC029";
     var imageSRC = html.find('img').attr('src');
     if (!/^https?:\/\//.test(imageSRC)) {
-      imageSRC = imageUnvailableSRC;
+      imageSRC = imageUnavailableSRC;
     }
     var image = $("<img>");
     image.attr("src", imageSRC);
